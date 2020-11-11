@@ -1,0 +1,17 @@
+{
+  "name": "real-time-calculator",
+  "version": "0.0.1",
+  "description": "a Sezzle coding challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Calculator",
+    "Socket.io",
+    "Node",
+    "Express"
+  ],
+  "author": "Tunde Oretade",
+  "license": "MIT"
+}
