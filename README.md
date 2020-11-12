@@ -1,4 +1,3 @@
-# real-time-calculator
 
 
 <h1 align="center">Real-time-calculator 👋</h1>
