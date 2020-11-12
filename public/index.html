@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time-Calculator</title>
+    <link  rel="stylesheet" type='text/css' href="css/main.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.css"
+        integrity="sha256-67AR2JVjhMZCLVxapLuBSMap5RrXbksv4vlllenHBSE=" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+
+<body>
+
+    <div class="p4" id="app">
+        <div class="columns has-content-hcentered">
+            <div class="column is-12 has-content-hcentered">
+                {{message}}
+            </div>
+        </div>
+        <div class="columns is-mobile" v-for="keys in calculatorKeys">
+            <div class="column is-2" v-for="key in keys">
+                <button v-on:click="addToEval(key)">{{key}}</button>
+            </div>
+        </div>
+        <!-- <button v-on:click="broadcastResult()">Emit Calc Result</button> -->
+        <p v-for="val in history">{{val}}</p>
+
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket = io();
+    </script>
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                message: 'Simple Calculator',
+                calcResult: "",
+                calculatorKeys: [
+            
+                    [1, 2, 3, "+"],
+                    [4, 5, 6, "-"],
+                    [7, 8, 9, "*"],
+                    [0, ".", "/","="]
+                ],
+                socket,
+                history: []
+
+            },
+            
+            methods: {
+                broadcastResult: function () {
+                    socket.emit("new_result", this.calcResult)
+                    this.calcResult = "";
+                },
+                
+                
+                addToEval: function (val) {
+                    console.log(this.calcResult);
+
+                    if (val === "=") {
+                        const result = eval(this.calcResult);
+                        this.calcResult = `${this.calcResult}=${result}`
+                        this.broadcastResult();
+                        return
+                    }
+                    this.calcResult = `${this.calcResult}${val}`
+                },
+                
+                
+                calculate: function () {
+                    eval(this.calcResult);
+                }
+            },
+            
+            
+            created: function () {
+                socket.on("broadcast_result", (data) => {
+                    if(this.history.length > 9) {
+                        this.history.pop();
+                    }
+                    this.history.unshift(data);
+                    console.log("new broadcast", data);
+                })
+                // `this` points to the vm instance
+                console.log('a is: ' + this.a)
+            }
+
+        })
+    </script>
+</body>
+
+</html>
